@@ -21,7 +21,9 @@ def Mode(hist):
 
     returns: value from Hist
     """
-    return 0
+    dct = hist.GetDict()
+    mode = max(dct, key=dct.get)
+    return mode
 
 
 def AllModes(hist):
@@ -31,7 +33,22 @@ def AllModes(hist):
 
     returns: iterator of value-freq pairs
     """
-    return []
+    items = hist.Items()
+    items_sorted = sorted(items, key=lambda x: x[1], reverse=True)
+    return items_sorted
+
+
+def WeightMeansDiff(firsts, others):
+    """Compare mean weight of the first babies and others.
+
+    firsts: DataFrane of first babies
+    others: DataFrame of other babies
+
+    returns: tuple with difference of means and Cohen's d
+    """
+    mean_diff = firsts.totalwgt_lb.mean() - others.totalwgt_lb.mean()
+    d = thinkstats2.CohenEffectSize(firsts.totalwgt_lb, others.totalwgt_lb)
+    return mean_diff, d
 
 
 def main(script):
@@ -53,6 +70,10 @@ def main(script):
 
     for value, freq in modes[:5]:
         print(value, freq)
+
+    mean_diff, d = WeightMeansDiff(firsts, others)
+    print(f'Difference of means between fists and others: {mean_diff}')
+    print(f'Cohen\'s d: {d}')
 
     print('%s: All tests passed.' % script)
 
